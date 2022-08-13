@@ -5,18 +5,19 @@ class Config(object):
     TESTING = False
     CSRF_ENABLED = True
 
-    SECRET_KEY = os.environ.get('SECRET_KEY')
-        
-    DB_NAME = 'SMARTSHORTNER'
-    DB_USERNAME = 'ADMIN'
+    SECRET_KEY = os.environ.get('SECRET_KEY')        
+    BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+
+    DB_NAME = 'mydb'
+    DB_USERNAME = 'admin'
     DB_PASSWORD = os.environ.get('DB_PASSWORD')
 
-    MONGO_URI = f'mongodb+srv://admin:{DB_PASSWORD}@cluster0.wffxo.mongodb.net/?retryWrites=true&w=majority'
+    MONGO_URI = f'mongodb+srv://{DB_USERNAME}:{DB_PASSWORD}@cluster0.wffxo.mongodb.net/{DB_NAME}?retryWrites=true&w=majority'
 
     SESSION_COOKIE_SECURE = True    
 
 class ProductionConfig(Config):
-    pass
+    DEBUG = False
 
 class DevelopmentConfig(Config):
     DEBUG = True 

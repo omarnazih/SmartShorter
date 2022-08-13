@@ -10,4 +10,5 @@ app.config.from_object('config.DevelopmentConfig')
 mongodb_client = PyMongo(app)
 db = mongodb_client.db
 
+
 from app import routes
