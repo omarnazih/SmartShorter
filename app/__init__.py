@@ -3,8 +3,10 @@ from flask_pymongo import PyMongo
 
 app = Flask(__name__)
 
-# Loading Configs from config file
-app.config.from_object('config.DevelopmentConfig')
+# Load Config File based on current "FLASK_ENV"
+# EX: config.ProductionConfig, config.DevelopmentConfig
+ENV = app.config['ENV'].capitalize()
+app.config.from_object(f"config.{ENV}Config")
 
 # Setup Mongodb
 mongodb_client = PyMongo(app)

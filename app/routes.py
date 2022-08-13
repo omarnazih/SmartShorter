@@ -1,53 +1,35 @@
 from app import app, db
 from flask import request, json, jsonify
+from flask_cors import CORS
+from app.models import Url
 
+# Allow access for all domains in development env
+# if app.config['ENV'] == 'development':
+# !remove on prodcution
+CORS(app)
 
 @app.route('/')
-def index():    
+def index():        
     return {'status': 'OK',
             f'{request.url}shortlinks': 'Show all shortned links',
             f'{request.url}createshortlink': 'Create new shortlink',
-            f'{request.url}shortlinks/<slug>': 'Update shortlink <slug>'}, 200
-
-
-@app.route('/shortlinks', methods=['GET'])
-def shortLinks():    
-    shortlinks_db_list = []
-
-    # Return all shortlinks from mongodb
-    shortlinks = db.test.find({})
-    for entry in shortlinks:        
-        row = {
-            'slug': entry['slug'],
-            'link': entry['link'],
-        }
-        shortlinks_db_list.append(row)
-    
-    response = {
-        'data':shortlinks_db_list
-    }    
-        
-    return jsonify(response), 200
-    
+            f'{request.url}shortlinks/<slug>': 'Update shortlink slug'}, 200
 
 
 @app.route('/createshortlink', methods=['POST'])
 def createShortLink():            
-    if not request.is_json:
-        return jsonify({"msg":"Missing JSON in request", "status":400}), 400
-        
-    req_data = request.get_json()
-    print(req_data)
+    return Url().insert()     
 
-    return req_dat
+@app.route('/shortlinks', methods=['GET'])
+def shortLinks():                
+    return Url().retreive_all()    
 
+@app.route('/shortlinks/<slug>', methods=['GET', 'PUT'])
+def updateShortLink(slug):  
+    if request.method == 'GET':
+        return Url().get(slug) 
 
-@app.route('/shortlinks', defaults={'slug':None}, methods=['PUT'])
-@app.route('/shortlinks/<slug>', methods=['PUT'])
-def updateShortLink(slug):    
-    # !NOTE Slug stays as it is
-    return f'update shortlink for this slug {slug}'
-
+    return Url().update(slug)                
 
 @app.errorhandler(404)
 def not_found(error=None):
@@ -57,14 +39,4 @@ def not_found(error=None):
     }
     response = jsonify(message)
     response.status_code = 404
-    return response    
-
-@app.errorhandler(500)
-def not_found(error=None):
-    message = {
-        'message': 'Internal Server Error ' + request.url,
-        'status': 500
-    }
-    response = jsonify(message)
-    response.status_code = 500
     return response    
