@@ -11,7 +11,7 @@ class ShortLink:
     
   def fetch_one(self, slug, show_id=False):
     if show_id:
-      return self.db.find_one({'slug': slug})    
+      return self.db.find_one({'slug': slug})     
     return self.db.find_one({'slug': slug}, {'_id': False})  
 
   def fetch_all(self):    

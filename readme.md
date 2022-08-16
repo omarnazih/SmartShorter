@@ -1,7 +1,10 @@
 # SmartShortner
 
-### To Start Using this code
+### Start
+
 ```
-pip freeze > requirements.txt
+virtaulenv venv
+source venv/Scripts/activate
 pip install -r requirements.txt
+python run.py
 ```

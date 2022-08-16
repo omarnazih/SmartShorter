@@ -4,9 +4,7 @@ from flask_cors import CORS
 from app import app, db
 from app.controller import *
 
-# remove on prodcution
 # Allow access for all domains while in development env
-# if app.config['ENV'] == 'development':
 CORS(app)
 
 @app.route('/')
@@ -18,7 +16,7 @@ def index():
 
 @app.route('/<slug>')
 def short_link(slug):        
-    return  get_link(slug)
+    return get_link(slug, request)
 
 @app.route('/shortlinks', methods=['GET', 'POST'])
 def short_links():       
@@ -26,7 +24,6 @@ def short_links():
         return get_all_links()
         
     return create_link(request.json)
-
 
 @app.route('/shortlinks/<slug>', methods=['PUT'])
 def update_short_link(slug):      

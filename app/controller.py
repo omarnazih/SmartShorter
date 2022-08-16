@@ -1,4 +1,4 @@
-from flask import jsonify, abort
+from flask import jsonify, abort, redirect
 import uuid
 
 from app.models import ShortLink
@@ -9,15 +9,40 @@ ShortLink = ShortLink()
 def generate_slug():
   return uuid.uuid4().hex  
 
+def get_platform(user_agent):
+  if "Android" in user_agent:
+    return "android"
+
+  if "Windows" in user_agent:
+    return "web"
+
+  if "Mac OS" in user_agent:
+    return "ios"
+
+  return None  
+
+def get_link_for_platform(link, platform):
+  if not platform or platform == 'web':
+    return link['web']
+
+  if 'primary' in link[platform]:
+    return link[platform]['primary']
+
+  if 'fallback' in link[platform]:
+    return link[platform]['fallback']
+
 def get_all_links():
   return jsonify(ShortLink.fetch_all()) 
 
-def get_link(slug):
+def get_link(slug, request):
   link = ShortLink.fetch_one(slug)
   if not link:
     abort(404)
+  
+  platform = get_platform(request.headers.get('User-Agent'))
+  location = get_link_for_platform(link, platform) 
 
-  return jsonify(link)
+  return redirect(location, 302)
 
 def create_link(request):
   if 'slug' in request and request['slug'] != "":
@@ -36,15 +61,15 @@ def create_link(request):
 
   new_link = {
     "slug":slug,
+    "web": check_key_exist('web', request),
     "android":{
-      "primary": request['android']['primary'],
-      "fallback": request['android']['fallback'],
+      "primary": check_2keys_exist('android', 'primary', request),
+      "fallback": check_2keys_exist('android', 'fallback', request),
     },
     "ios":{
-      "primary": request['ios']['primary'],
-      "fallback": request['ios']['fallback'],
-    },
-    "web":request['web']
+      "primary": check_2keys_exist('ios', 'primary', request),
+      "fallback": check_2keys_exist('ios', 'fallback', request),
+    }    
   } 
   ShortLink.insert(new_link) 
 
@@ -93,3 +118,14 @@ def update_link(slug, request):
   return response
 
 
+# Helpers
+def check_key_exist(key, request):
+  if key in request:
+    return request[key]
+  return      
+
+def check_2keys_exist(key1, key2, request):
+  if key1 in request:
+    if key2 in request[key1]:
+      return request[key1][key2]
+  return    
