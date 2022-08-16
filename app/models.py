@@ -4,7 +4,7 @@ class ShortLink:
 
   def __init__(self):
     # Collection - test
-    self.db = db.test
+    self.db = db.shortlinks
 
   def insert(self, shortlink):
     self.db.insert_one(shortlink)
