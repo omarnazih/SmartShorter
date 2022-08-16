@@ -6,8 +6,8 @@ from app.controller import *
 
 # remove on prodcution
 # Allow access for all domains while in development env
-if app.config['ENV'] == 'development':
-    CORS(app)
+# if app.config['ENV'] == 'development':
+CORS(app)
 
 @app.route('/')
 def index():        
