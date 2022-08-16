@@ -5,7 +5,6 @@
 - Implement the API as documented below
 - MVC, separate logic form representation,
 - git commit log is required write good commit log
-- Deplaoy on digital Ocean, Postman file
 
 
 API 
@@ -13,6 +12,7 @@ API
 
 Bonus
 - unittest
+- Deplaoy on digital Ocean, Postman file
 - one page screen for smart links generation
 - Implementing user authentication is a bonus (basicAuth or OAuth2)
 ```

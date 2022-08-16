@@ -1,60 +1,21 @@
-from flask import Flask, jsonify, request, redirect
-from datetime import datetime 
-from random import choice
 from app import db
-import string
-import uuid
 
-class Url:
-  
-  def insert(self):
+class ShortLink:
 
-    if not request.is_json:
-      return jsonify({"msg":"Missing JSON in request"}), 400
+  def __init__(self):
+    # Collection - test
+    self.db = db.test
 
-    req = request.get_json()
-    url = {
-      "_id": uuid.uuid4().hex,
-      "slug": uuid.uuid4().hex,
-      "primary": req['primary'],
-      "fallback": req['fallback'],
-      "time": datetime.now()
-    }
-
-    new_url = request.url.replace('createshortlink', 'shortlinks')
-    shortend_url = f"{new_url}/{url['slug']}"
-
-    if db.test.insert_one(url):      
-      return jsonify(shortend_url), 200
+  def insert(self, shortlink):
+    self.db.insert_one(shortlink)
     
-    return jsonify({"msg": "Insertion Failed"}), 400       
+  def fetch_one(self, slug, show_id=False):
+    if show_id:
+      return self.db.find_one({'slug': slug})    
+    return self.db.find_one({'slug': slug}, {'_id': False})  
 
-  def retreive_all(self):
-    
-    shortlinks = db.test.find({})
-
-    # If empty list return
-    if not shortlinks:
-        return jsonify({"msg":"No Data found"}), 400    
-    
-    shortlinks_list = []
-    for entry in shortlinks:             
-      row = {
-          'slug': entry['slug'],
-      }
-      shortlinks_list.append(row)
-        
-    return jsonify(data=shortlinks_list), 200        
-
-  def get(self, slug):
-
-    response = db.test.find_one_or_404({"slug": slug})    
-
-    return redirect(response['primary'], code=302)
-
-  def update(self, slug):
-
-    if db.test.find_one_or_404({"slug": slug}):
-      return "Found"
-    
-    return redirect(response['primary'], code=302)    
+  def fetch_all(self):    
+    return [dict(link) for link in self.db.find({}, {'_id': False})]    
+      
+  def update(self, link):
+    self.db.update_one({"slug": link['slug']}, {"$set": link})

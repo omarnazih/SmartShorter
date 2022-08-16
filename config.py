@@ -12,8 +12,11 @@ class Config(object):
     DB_USERNAME = 'admin'
     DB_PASSWORD = os.environ.get('DB_PASSWORD')
 
-    MONGO_URI = f'mongodb+srv://{DB_USERNAME}:{DB_PASSWORD}@cluster0.wffxo.mongodb.net/{DB_NAME}?retryWrites=true&w=majority'
+    if not DB_PASSWORD:
+        DB_PASSWORD = '42F7iDLNt002Xagy'
 
+    MONGO_URI = f'mongodb+srv://{DB_USERNAME}:{DB_PASSWORD}@cluster0.wffxo.mongodb.net/{DB_NAME}?retryWrites=true&w=majority'
+        
     SESSION_COOKIE_SECURE = True    
 
 class ProductionConfig(Config):
