@@ -21,15 +21,17 @@ def get_platform(user_agent):
 
   return None  
 
-def get_link_for_platform(link, platform):
+def get_platform_link(link, platform):
+
   if not platform or platform == 'web':
     return link['web']
 
-  if 'primary' in link[platform]:
+  if link[platform]['primary']:
     return link[platform]['primary']
 
-  if 'fallback' in link[platform]:
+  if link[platform]['fallback']:
     return link[platform]['fallback']
+  
 
 def get_all_links():
   return jsonify(ShortLink.fetch_all()) 
@@ -40,7 +42,7 @@ def get_link(slug, request):
     abort(404)
   
   platform = get_platform(request.headers.get('User-Agent'))
-  location = get_link_for_platform(link, platform) 
+  location = get_platform_link(link, platform) 
 
   return redirect(location, 302)
 
