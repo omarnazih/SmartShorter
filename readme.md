@@ -8,9 +8,9 @@ SmartShortner is an API that Shortens your url, this is only the backend part yo
 [Heroku](https://smart-shorter-api.herokuapp.com/)  
 
 ### To run this project
-- Create a virtual environment
+- Create and navigate to virtual environment
 ```
-virtaulenv venv
+virtualenv venv
 source venv/Scripts/activate
 ```
 - Install packages
