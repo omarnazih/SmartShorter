@@ -32,7 +32,6 @@ def get_platform_link(link, platform):
   if link[platform]['fallback']:
     return link[platform]['fallback']
   
-
 def get_all_links():
   return jsonify(ShortLink.fetch_all()) 
 
@@ -65,7 +64,7 @@ def create_link(request):
     "slug":slug,
     "web": check_key_exist('web', request),
     "android":{
-      "primary": check_2keys_exist('android', 'primary', request),
+      "primary":  check_2keys_exist('android', 'primary', request),
       "fallback": check_2keys_exist('android', 'fallback', request),
     },
     "ios":{
